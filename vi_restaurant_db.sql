@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: MySQL-8.4:3306
--- Время создания: Май 25 2026 г., 16:27
+-- Время создания: Май 25 2026 г., 16:41
 -- Версия сервера: 8.4.8
 -- Версия PHP: 8.5.4
 
@@ -248,8 +248,16 @@ CREATE TABLE `supplier` (
 CREATE TABLE `users` (
   `username` varchar(15) NOT NULL,
   `salt` varchar(50) NOT NULL,
-  `hashed_password` varchar(50) NOT NULL
+  `hashed_password` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Дамп данных таблицы `users`
+--
+
+INSERT INTO `users` (`username`, `salt`, `hashed_password`) VALUES
+('administrator', '35a2cd9b-29e0-40a6-ad45-0bc998b2e80a', '98074ffb8d566467d98823229719475cfc57efe0c2facdc2a2e42e9af84b6ba1'),
+('waiter', '75165155-0163-415b-8d44-019949eb526f', '6b0cb0bfba2a09ef690db358298c1e422134a62b37a8aa8cc81b08f66da99966');
 
 --
 -- Индексы сохранённых таблиц
