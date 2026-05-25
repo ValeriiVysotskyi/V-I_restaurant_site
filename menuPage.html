@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./css/menuPage.css">
+    <script src="./js/menuPage.js" defer></script>
+    <title>V&I menu</title>
+</head>
+<body>
+    <div class="loader">
+        <div class="spinner"></div>
+        <p>Завантажується щось смачненьке 🥲</p>
+    </div>
+
+    <div class="menu" style="display: none;">
+        <div class="header">
+            <div>
+                <img src="./assets/icons/utensils-crossed.svg">
+                <h1>V&I restaurant</h1>
+                <p>Смачна їжа для Вас</p>
+            </div>
+            <div class="category-container">
+                <button>Усі страви</button>
+                <button>Десерти</button>
+                <button>Бар</button>
+                <button>Гарячі страви</button>
+                <button>Салати</button>
+                <button>Закуски</button>
+            </div>
+        </div>
+            
+        <div class="dish-container"></div>
+
+        <div>
+            <button onclick="window.location.href = 'orderPage.html'"><img src="./assets/icons/shopping-bag.svg">Переглянути замовлення</button>
+        </div>
+    </div>
+</body>
+</html>
