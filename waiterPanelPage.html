@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель офіціанта - Активні замовлення</title>
+    <link rel="stylesheet" href="./css/waiterPanelPage.css">
+    <script src="./js/waiterPanelPage.js" defer></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-info">
+            <div class="logo">
+                <img src="./assets/icons/utensils-crossed.svg">
+            </div>
+            <div class="header-text">
+                <h2>V&I restaurant</h2>
+                <p>Панель офіціанта</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="location.reload()">
+                <img src="./assets/icons/refresh-cw.svg">
+            </button>
+            <button class="icon-btn" onclick="logout()">
+                <img src="./assets/icons/log-out.svg">
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="page-title">
+            <h1>Активні замовлення</h1>
+            <p>Замовлення зі статусом "В обробці"</p>
+        </div>
+
+        <div class="orders-list"></div>
+    </main>
+</body>
+</html>
