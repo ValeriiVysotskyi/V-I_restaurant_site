@@ -1,3 +1,6 @@
+/* 
+Стилі основного вікна
+ */
 :root {
     --bg-color: #f4f5f7;
     --card-bg: #ffffff;
@@ -22,7 +25,6 @@ body {
     color: var(--text-main);
 }
 
-/* Шапка (Header) */
 .header {
     background-color: var(--card-bg);
     padding: 16px 20px;
@@ -204,4 +206,502 @@ body {
     font-size: 24px;
     font-weight: 800;
     color: var(--text-main);
+}
+
+
+
+/* 
+Стилі вікна чеку
+ */
+dialog::backdrop {
+    background-color: rgba(30, 35, 45, 0.4);
+    backdrop-filter: blur(2px);
+}
+
+dialog.modal-container {
+    border: none;
+    margin: auto;
+    padding: 0;
+    background-color: var(--card-bg);
+    width: 100%;
+    max-width: 650px;
+    height: 90vh;
+    max-height: 800px;
+    border-radius: 20px;
+    display: flex; 
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+dialog.modal-container:not([open]) {
+    display: none;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--accent-orange-1), var(--accent-orange-2));
+    color: white;
+    padding: 20px 24px;
+}
+
+.modal-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.modal-header-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.table-avatar {
+    width: 52px;
+    height: 52px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.18);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    backdrop-filter: blur(8px);
+}
+
+.table-avatar img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    display: block;
+    filter: brightness(0) invert(1);
+}
+
+.table-text h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.table-text p {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.modal-close-btn {
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    appearance: none;
+    outline: none;
+}
+
+.modal-header-bottom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    opacity: 0.85;
+    filter: brightness(0) invert(1);
+}
+
+.modal-body {
+    padding: 24px;
+    flex: 1;
+    overflow-y: auto;
+    background-color: #ffffff;
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+.modal-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 16px;
+}
+
+.order-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    border-radius: 16px;
+    padding: 12px 16px;
+    gap: 16px;
+}
+
+.item-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.item-main-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.item-title {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-main);
+}
+
+.item-quantity-controls {
+    display: inline-flex;
+    align-items: center;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    width: fit-content;
+}
+
+.qty-btn {
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.qty-value {
+    width: 32px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.item-price-info {
+    text-align: right;
+    margin-right: 12px;
+}
+
+.price-total {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.price-calc {
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.item-delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.item-delete-btn:active {
+    transform: scale(0.9);
+}
+
+.modal-footer {
+    padding: 20px 24px;
+    background-color: var(--bg-color);
+    border-top: 1px solid var(--border-color);
+}
+
+.discount-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.discount-block label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.form-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background-color: white;
+    font-size: 15px;
+    color: var(--text-main);
+    appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 16px top 50%;
+    background-size: 10px auto;
+    cursor: pointer;
+}
+
+.totals-block {
+    margin-bottom: 24px;
+}
+
+.subtotal-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.discount-row {
+    display: none;
+    justify-content: space-between;
+    font-size: 15px;
+    color: var(--status-green);
+    margin-bottom: 16px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-main);
+    border-top: 1px solid var(--border-color); 
+    padding-top: 16px;
+}
+
+.total-sum {
+    font-size: 22px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 16px;
+}
+
+.btn {
+    flex: 1;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn:active {
+    opacity: 0.8;
+}
+
+.btn-cancel {
+    background-color: white;
+    border: 1px solid #ff3b30;
+    color: #ff3b30;
+}
+
+.btn-checkout {
+    background: linear-gradient(90deg, var(--accent-orange-1), var(--accent-orange-2));
+    border: none;
+    color: white;
+}
+
+.btn-checkout img {
+    filter: brightness(0) invert(1);
+}
+
+
+/* 
+Стилі вікна завантаження
+ */
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #ff7b00;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+
+/* 
+Стилі вікна скасування чеку
+ */
+.confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.confirm-modal {
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 16px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.confirm-modal h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 18px;
+    color: #222;
+}
+
+.confirm-modal p {
+    margin-bottom: 24px;
+    color: #555;
+    font-size: 15px;
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.confirm-actions button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary {
+    background-color: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background-color: #e8e8e8;
+}
+
+.btn-danger {
+    background-color: #fff;
+    border: 1px solid #e53935;
+    color: #e53935;
+}
+
+.btn-danger:hover {
+    background-color: #ffebee;
+}
+
+
+
+
+/* 
+Стилі вікна закриття чеку
+ */
+.checkout-modal {
+    width: 360px; 
+}
+
+.checkout-total-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.checkout-total-label {
+    font-size: 15px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.checkout-total-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.checkout-payment-method {
+    text-align: left;
+    margin-bottom: 24px;
+}
+
+.checkout-payment-method label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.btn-checkout-submit {
+    background: linear-gradient(90deg, var(--accent-orange-1), var(--accent-orange-2));
+    border: none;
+    color: white;
+}
+
+.btn-checkout-submit:hover {
+    opacity: 0.9;
+    box-shadow: 0 4px 10px rgba(255, 107, 0, 0.2);
 }
