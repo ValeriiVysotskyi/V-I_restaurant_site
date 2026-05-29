@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Панель офіціанта - Активні замовлення</title>
     <link rel="stylesheet" href="./css/waiterPanelPage.css">
+    <script src="./js/config.js" defer></script>
     <script src="./js/waiterPanelPage.js" defer></script>
 </head>
+
 <body>
+    <!-- Головне вікно -->
     <header class="header">
         <div class="header-info">
             <div class="logo">
@@ -36,5 +39,115 @@
 
         <div class="orders-list"></div>
     </main>
+
+    <!-- Вікно завантаження -->
+    <div id="loader-overlay" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Вікно перегляду замовлення -->
+    <dialog class="modal-container" id="order-modal">
+        <div class="modal-header">
+            <div class="modal-header-top">
+                <div class="modal-header-info">
+                    <div class="table-avatar">
+                        <img src="./assets/icons/utensils-crossed.svg">
+                    </div>
+                    <div class="table-text">
+                        <h2 class="table-number"></h2>
+                        <p class="order-number"></p>
+                    </div>
+                </div>
+
+                <button class="modal-close-btn" onclick="closeOrderDetails()">
+                    <img src="./assets/icons/x.svg">
+                </button>
+            </div>
+            
+            <div class="modal-header-bottom">
+                <img src="./assets/icons/clock-4.svg">
+                <p>Останнє оновлення: <span class="update-time"></span></p>
+            </div>
+        </div>
+
+        <div class="modal-body">
+            <h3 class="section-title">Страви в замовленні</h3>
+            <div class="order-items-list"></div>
+        </div>
+
+        <div class="modal-footer">
+            <div class="discount-block">
+                <label for="discount-select">Знижка</label>
+                <select id="discount-select" class="form-select" onchange="renderUpdateDiscount()"></select>
+            </div>
+            
+            <div class="totals-block">
+                <div class="subtotal-row">
+                    <span>Проміжна сума:</span>
+                    <span class="sub-total-sum"></span>
+                </div>
+                <div class="discount-row" id="discount-row">
+                    <span id="discount-label"></span>
+                    <span id="discount-value"></span>
+                </div>
+                <div class="total-row">
+                    <span>До сплати:</span>
+                    <span class="total-sum"></span>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <div style="flex: 1; display: flex;">
+                    <button type="button" class="btn btn-cancel" style="width: 100%;" onclick="openCancelModal()">
+                        <img src="./assets/icons/circle-x.svg">
+                        Скасувати
+                    </button>
+                </div>
+                <button type="button" class="btn btn-checkout" style="flex: 1;" onclick="openCloseOrderModal()">
+                    <img src="./assets/icons/check.svg">
+                    Закрити чек
+                </button>
+            </div>
+        </div>
+
+
+        <!-- Вікно скасування чеку -->
+        <div id="cancel-confirm-overlay" class="confirm-overlay">
+            <div class="confirm-modal">
+                <h3>Підтвердження</h3>
+                <p>Ви впевнені, що хочете скасувати чек?</p>
+                <div class="confirm-actions">
+                    <button id="btn-cancel-no" class="btn-secondary" onclick="closeCancelModal()">Ні</button>
+                    <button id="btn-cancel-yes" class="btn-danger">Так</button>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- Вікно закриття чеку -->
+        <div id="checkout-confirm-overlay" class="confirm-overlay">
+            <div class="confirm-modal checkout-modal">
+                <h3>Оплата замовлення</h3>
+                
+                <div class="checkout-total-box">
+                    <span class="checkout-total-label">До сплати:</span>
+                    <span class="checkout-total-value" id="checkout-final-sum">890 грн</span>
+                </div>
+
+                <div class="checkout-payment-method">
+                    <label for="payment-method">Оберіть спосіб оплати</label>
+                    <select id="payment-method" class="form-select">
+                        <option value="card">💳 Оплата Карткою</option>
+                        <option value="cash">💵 Оплата Готівкою</option>
+                    </select>
+                </div>
+
+                <div class="confirm-actions">
+                    <button id="btn-checkout-cancel" class="btn-secondary" onclick="closeCloseOrderModal()">Скасувати</button>
+                    <button id="btn-checkout-submit" class="btn-checkout-submit">Закрити чек</button>
+                </div>
+            </div>
+        </div>
+    </dialog>
 </body>
 </html>
