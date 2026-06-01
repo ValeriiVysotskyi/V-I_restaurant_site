@@ -49,8 +49,7 @@ abstract class BaseDal
             $sql .= " ORDER BY {$orderBy} {$direction}";
         }
 
-        return $this->query($sql, $params)
-            ->fetchAll(PDO::FETCH_ASSOC);
+        return $this->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function insert($data) {
@@ -81,7 +80,6 @@ abstract class BaseDal
                 WHERE {$this->primaryKey} = :primary_key_value";
 
         $data['primary_key_value'] = $id;
-
         $stmt = $this->query($sql, $data);
 
         return $stmt->rowCount() > 0;
