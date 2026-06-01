@@ -10,4 +10,17 @@ class RestaurantTableDal extends BaseDal {
     public function __construct($db) {
         parent::__construct($db);
     }
+
+    public function getByToken(string $token) {
+        $sql = "
+            SELECT *
+            FROM restaurant_table
+            WHERE token = :token
+        ";
+
+        $stmt = $this->connection->prepare($sql);
+        $stmt->execute([':token' => $token]);
+
+        return $stmt->fetch();
+    }
 }
