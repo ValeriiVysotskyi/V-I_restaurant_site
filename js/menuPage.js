@@ -80,4 +80,23 @@ const renderDishes = (dishesInfo) => {
 // =============================
 // CALLS
 // =============================
-getDishes(0)
+const categoryButtons = document.querySelectorAll(".category-container button");
+
+categoryButtons.forEach(button => {
+    button.addEventListener("click", (event) => {
+        document.querySelector(".category-container button.active")?.classList.remove("active");
+        
+        event.target.classList.add("active");
+
+        const loaderDisplay = document.querySelector(".loader");
+        const menuDisplay = document.querySelector(".menu");
+        loaderDisplay.style.display = "flex"; // возвращаем лоадер
+        
+        document.querySelector(".dish-container").innerHTML = "";
+
+        const categoryId = event.target.getAttribute("data-category-id");
+        getDishes(categoryId);
+    });
+});
+
+getDishes(0);

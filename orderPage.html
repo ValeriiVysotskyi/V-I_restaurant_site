@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
@@ -8,22 +8,50 @@
     <title>V&I order</title>
 </head>
 <body>
-    <div>
-        <div class="header">
-            <img src="./assets/icons/arrow-left.svg">
-            <a href="./menuPage.html">Назад до меню</a>
-            <h1>Стіл № <span>13</span></h1>
+    <div class="menu"> <div class="header">
+            <div class="nav-bar">
+                <a href="./menuPage.html" class="back-link">
+                    <img src="./assets/icons/arrow-left.svg" alt="Назад">
+                    Назад до меню
+                </a>
+                <h1>Стіл № <span>13</span></h1>
+            </div>
+            
+            <div class="summary-box">
+                <div class="summary-row">
+                    <p>Загальна сума столу:</p>
+                    <span class="total-sum">1240₴</span>
+                </div>
+                <div class="summary-row current-suborder">
+                    <p>Поточне замовлення:</p>
+                    <span><span class="suborder-sum">0</span>₴</span>
+                </div>
+            </div>
         </div>
-        <div>
-            <p>Загальна сума столу: <span>1240</span>₴ </p>
-            <hr>
-            <p>Поточне замовлення: <span class="suborder-sum"></span>₴ </p>
-        </div>
+
         <h2>Ваше замовлення</h2>
         <div class="suborder-container"></div>
-        <div>
-            <button onclick="addSubOrder()"><img src="./assets/icons/check.svg">Підтвердити замовлення</button>
+        
+       <div class="bottom-action">
+            <button class="confirm-btn" onclick="addSubOrder()">
+                <img src="./assets/icons/check.svg" alt="Check">
+                Підтвердити замовлення
+            </button>
+
+
+<!--            
+            <div class="extra-buttons">
+                <button onclick="alert('Офіціант уже поспішає!')">
+                    Покликати офіціанта
+                </button>
+                <button onclick="alert('Рахунок готується')">
+                    Попросити рахунок
+                </button>
+            </div> -->
+            
         </div>
+
     </div>
 </body>
+</html>
 </html>
