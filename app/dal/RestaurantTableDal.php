@@ -11,7 +11,7 @@ class RestaurantTableDal extends BaseDal {
         parent::__construct($db);
     }
 
-    public function getByToken(string $token) {
+    public function getByToken($token) {
         $sql = "
             SELECT *
             FROM restaurant_table

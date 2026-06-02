@@ -16,9 +16,7 @@ class UsersDal {
 
         $stmt = $this->db->prepare($sql);
 
-        $stmt->execute([
-            'username' => $username
-        ]);
+        $stmt->execute(['username' => $username]);
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result ?: null;
