@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./css/orderPage.css">
+    <script src="./js/config.js" defer></script>
+    <script src="./js/orderPage.js" defer></script>
+    <title>V&I order</title>
+</head>
+<body>
+    <div class="menu"> <div class="header">
+            <div class="nav-bar">
+                <a href="./menuPage.html" class="back-link">
+                    <img src="./assets/icons/arrow-left.svg" alt="Назад">
+                    Назад до меню
+                </a>
+                <h1>Стіл № <span></span></h1>
+            </div>
+            
+            <div class="summary-box">
+                <div class="summary-row">
+                    <p>Загальна сума столу:</p>
+                    <span class="total-sum">0₴</span>
+                </div>
+                <div class="summary-row current-suborder">
+                    <p>Поточне замовлення:</p>
+                    <span class="suborder-sum">0₴</span>
+                </div>
+            </div>
+        </div>
+
+        <h2>Ваше замовлення</h2>
+        <div class="suborder-container"></div>
+        
+       <div class="bottom-action">
+            <button class="confirm-btn" onclick="addSubOrder()">
+                <img src="./assets/icons/check.svg" alt="Check">
+                Підтвердити замовлення
+            </button>
+        </div>
+    </div>
+</body>
+</html>
