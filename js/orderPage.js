@@ -3,23 +3,57 @@
 // =============================
 async function addSubOrder() {
     try {
-        const response = await fetch("https://5872e08c-3af7-4c46-b35e-5e0455740393.mock.pstmn.io/api/order_items", {
+        const tableNumber = localStorage.getItem("table_number");
+        const tableToken = localStorage.getItem("table_token");
+
+        if (storedDishes.length === 0) {
+            alert("Кошик порожній!");
+            return;
+        }
+
+        const orderPayload = {
+            table_number: tableNumber,
+            table_token: tableToken,
+            items: storedDishes
+        };
+
+        const response = await fetch(`${CONFIG.API_URL}/api/order_items`, {
             method: "POST",
             headers: {'Content-Type': "application/json"},
-            body: JSON.stringify(storedDishes)
-        })
+            body: JSON.stringify(orderPayload)
+        });
         
         if (!response.ok) {
             throw new Error(`Server Error: ${response.status}`);
         }
 
-        storedDishes = []
-        clearStoredDishes()
-        renderSuborderSum(calculateSuborderSum())
-        document.querySelector(".suborder-container").innerHTML = ""
-
+        storedDishes = [];
+        clearStoredDishes();
+        renderSuborderSum(calculateSuborderSum());
+        document.querySelector(".suborder-container").innerHTML = "";
+        
+        alert("Замовлення успішно надіслано на кухню!");
+        loadTableDetails();       
     } catch (error) {
-        console.log(error)
+        console.error("Помилка відправки підзамовлення:", error);
+    }
+}
+
+async function loadTableDetails() {
+    try {
+        const tableNumber = localStorage.getItem("table_number");
+        if (!tableNumber) return;
+
+        const response = await fetch(`${CONFIG.API_URL}/api/orders?restaurant_table=${tableNumber}`);
+        if (!response.ok) {
+            throw new Error(`Server Error: ${response.status}`);
+        }
+
+        const orderData = await response.json();
+        
+        renderTableTotalSum(orderData.price_without_discount)
+    } catch (error) {
+        console.error("Помилка завантаження суми столу:", error);
     }
 }
 
@@ -92,9 +126,12 @@ const decreaseDish = (dishElement, viewElement) => {
 // =============================
 // UI
 // =============================
+const backLink = document.querySelector(".back-link")
+backLink.href = `./menuPage.html?token=${localStorage.getItem("table_token")}`
+
 const renderSuborderSum = (suborderSum) => {
     const suborderSumField = document.querySelector(".suborder-sum")
-    suborderSumField.textContent = suborderSum
+    suborderSumField.textContent = `${suborderSum}₴`
 }
 
 const renderDishElements = (dishElements) => {
@@ -142,6 +179,20 @@ const renderUpdateElement = (dishElement) => {
     dishQuantity.textContent = dishElement.quantity
 }
 
+const renderTableInfo = () => {
+    const tableNumber = localStorage.getItem("table_number");
+    const tableNumSpan = document.querySelector(".nav-bar h1 span");
+    if (tableNumSpan && tableNumber) {
+        tableNumSpan.textContent = tableNumber;
+    }
+};
+
+const renderTableTotalSum = (totalSum) => {
+    const totalSumSpan = document.querySelector(".total-sum");
+    if (totalSumSpan) {
+        totalSumSpan.textContent = `${totalSum}₴`;
+    }
+};
 
 // =============================
 // CALLS
@@ -150,3 +201,7 @@ let storedDishes = getStoredDishes()
 renderDishElements(storedDishes)
 
 renderSuborderSum(calculateSuborderSum())
+
+renderTableInfo();
+
+loadTableDetails();

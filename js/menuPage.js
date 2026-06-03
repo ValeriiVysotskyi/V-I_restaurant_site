@@ -1,29 +1,64 @@
 // =============================
 // API
 // =============================
+async function getCategories() {
+    try {
+        const response = await fetch(`${CONFIG.API_URL}/api/category`);
+        
+        if (!response.ok) {
+            throw new Error(`Ошибка при загрузке категорий: ${response.status}`);
+        }
+
+        const categories = await response.json();
+        renderCategoryButtons(categories);
+
+    } catch (error) {
+        console.error("Не вдалося завантажити категорії:", error);
+    }
+}
+
 async function getDishes(category_id) {
     try {
-        const response = await fetch(`https://5872e08c-3af7-4c46-b35e-5e0455740393.mock.pstmn.io/api/dish?category_id=${category_id}`)
+        const loaderDisplay = document.querySelector(".loader");
+        const menuDisplay = document.querySelector(".menu");
+        const container = document.querySelector(".dish-container");
+
+        container.innerHTML = "";
+        loaderDisplay.style.display = "flex";
+        menuDisplay.style.display = "none";
+
+        const response = await fetch(`${CONFIG.API_URL}/api/dish?category_id=${category_id}`);
 
         if (!response.ok) {
             throw new Error(`Server Error: ${response.status}`);
         }
 
-        data = await response.json();
-        renderDishes(data)
+        const data = await response.json();
+        renderDishes(data);
 
-        const loaderDisplay = document.querySelector(".loader")
-        const menuDisplay = document.querySelector(".menu")
-
-        loaderDisplay.style.display = "none"
-        menuDisplay.style.display = "block"
+        loaderDisplay.style.display = "none";
+        menuDisplay.style.display = "block";
 
     } catch (error) {
-        console.log(error)
+        console.error("Помилка при завантаженні блюд:", error);
+        document.querySelector(".loader").style.display = "none";
     }
 }
 
+async function getTableInfo(token) {
+    try {
+        const response = await fetch(`${CONFIG.API_URL}/api/restaurant_table?token=${token}`);
+        
+        if (!response.ok) {
+            throw new Error(`Ошибка стола: ${response.status}`);
+        }
 
+        const tableData = await response.json();
+        localStorage.setItem("table_number", tableData.number);
+    } catch (error) {
+        console.error("Не вдалося перевірити токен стола:", error);
+    }
+}
 // =============================
 // BUSINESS-LOGIC
 // =============================
@@ -46,6 +81,27 @@ const addDish = (dishInfo) => {
 // =============================
 // UI
 // =============================
+const renderCategoryButtons = (categories) => {
+    const container = document.querySelector(".category-container");
+    container.innerHTML = "";
+
+    const allButton = document.createElement("button");
+    allButton.className = "category-button active";
+    allButton.setAttribute("data-category-id", "0");
+    allButton.textContent = "Усі страви";
+    container.appendChild(allButton);
+
+    categories.forEach(category => {
+        const button = document.createElement("button");
+        button.className = "category-button";
+        button.setAttribute("data-category-id", category.id);
+        button.textContent = category.name;
+        container.appendChild(button);
+    });
+
+    setupCategoryClicks();
+};
+
 const renderDishes = (dishesInfo) => {
     for (const dishInfo of dishesInfo) {
         const container = document.querySelector(".dish-container")
@@ -80,23 +136,29 @@ const renderDishes = (dishesInfo) => {
 // =============================
 // CALLS
 // =============================
-const categoryButtons = document.querySelectorAll(".category-container button");
+const urlParams = new URLSearchParams(window.location.search);
+const tokenFromUrl = urlParams.get("token");
 
-categoryButtons.forEach(button => {
-    button.addEventListener("click", (event) => {
-        document.querySelector(".category-container button.active")?.classList.remove("active");
-        
-        event.target.classList.add("active");
+if (tokenFromUrl) {
+    localStorage.setItem("table_token", tokenFromUrl);
+    getTableInfo(tokenFromUrl);
+} else if (!localStorage.getItem("table_token")) {
+    console.warn("table_token not found");
+}
 
-        const loaderDisplay = document.querySelector(".loader");
-        const menuDisplay = document.querySelector(".menu");
-        loaderDisplay.style.display = "flex"; // возвращаем лоадер
-        
-        document.querySelector(".dish-container").innerHTML = "";
+function setupCategoryClicks() {
+    const categoryButtons = document.querySelectorAll(".category-container button");
+    
+    categoryButtons.forEach(button => {
+        button.addEventListener("click", (event) => {
+            document.querySelector(".category-container button.active")?.classList.remove("active");
+            event.target.classList.add("active");
 
-        const categoryId = event.target.getAttribute("data-category-id");
-        getDishes(categoryId);
+            const categoryId = event.target.getAttribute("data-category-id");
+            getDishes(categoryId);
+        });
     });
-});
+}
 
+getCategories();
 getDishes(0);

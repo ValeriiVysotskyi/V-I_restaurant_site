@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./css/menuPage.css">
+    <script src="./js/config.js" defer></script>
     <script src="./js/menuPage.js" defer></script>
     <title>V&I menu</title>
 </head>
@@ -21,19 +22,13 @@
                 <p>Смачна їжа для Вас</p>
             </div>
             <div class="category-container">
-                <!-- <button>Усі страви</button>
-                <button>Десерти</button>
-                <button>Бар</button>
-                <button>Гарячі страви</button>
-                <button>Салати</button>
-                <button>Закуски</button> -->
             </div>
         </div>
             
         <div class="dish-container"></div>
 
         <div>
-            <button onclick="window.location.href = 'orderPage.html'"><img src="./assets/icons/shopping-bag.svg">Переглянути замовлення</button>
+            <button onclick="window.location.href = `orderPage.html?token=${localStorage.getItem('table_token')}`"><img src="./assets/icons/shopping-bag.svg">Переглянути замовлення</button>
         </div>
     </div>
 </body>

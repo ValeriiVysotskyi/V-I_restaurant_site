@@ -18,7 +18,7 @@ body {
     background-color: #FAFAF9;
     min-height: 100vh;
     position: relative;
-    padding-bottom: 110px; /* Чтобы список не залезал под кнопку */
+    padding-bottom: 110px;
 }
 
 .header {
@@ -27,7 +27,6 @@ body {
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.02);
 }
 
-/* Навигационная панель */
 .nav-bar {
     display: flex;
     justify-content: space-between;
