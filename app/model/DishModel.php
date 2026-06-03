@@ -29,4 +29,12 @@ class DishModel
     public function deleteDish($dishId) {
         return $this->dishDal->delete($dishId);
     }
+
+    public function getDishesByCategoryId($categoryId) {
+        if ($categoryId === 0) {
+            return $this->dishDal->getAll();
+        }
+
+        return $this->dishDal->getByCategoryId($categoryId);
+    }
 }

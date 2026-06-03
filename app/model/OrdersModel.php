@@ -18,6 +18,16 @@ class OrdersModel
         return $this->ordersDal->getWaiterOrderDetails($orderId);
     }
 
+    public function getOrderByTable($tableNumber) {
+        $order = $this->ordersDal->findActiveOrderByTable($tableNumber);
+
+        if ($order === null) {
+            return 0;
+        } else {
+            return $order;
+        }
+    }
+
     public function addItemsToOrder($data) {
         $tableNumber = $data['table_number'];
 
