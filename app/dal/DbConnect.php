@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+
 
 
 class DbConnect
@@ -20,12 +20,14 @@ class DbConnect
                 $_ENV['DB_PASS']
             );
 
+            self::$connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
             self::$connection->setAttribute(
                 PDO::ATTR_ERRMODE,
                 PDO::ERRMODE_EXCEPTION
             );
         }
-
+        
         return self::$connection;
     }
 }

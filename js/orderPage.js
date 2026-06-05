@@ -17,7 +17,7 @@ async function addSubOrder() {
             items: storedDishes
         };
 
-        const response = await fetch(`${CONFIG.API_URL}/api/order_items`, {
+        const response = await fetch(`${CONFIG.API_URL}/api/orders`, {
             method: "POST",
             headers: {'Content-Type': "application/json"},
             body: JSON.stringify(orderPayload)
@@ -44,12 +44,14 @@ async function loadTableDetails() {
         const tableNumber = localStorage.getItem("table_number");
         if (!tableNumber) return;
 
-        const response = await fetch(`${CONFIG.API_URL}/api/orders?restaurant_table=${tableNumber}`);
+        const response = await fetch(`${CONFIG.API_URL}/api/orders?table_number=${tableNumber}`);
         if (!response.ok) {
             throw new Error(`Server Error: ${response.status}`);
         }
 
         const orderData = await response.json();
+        
+        const finalSum = orderData.price_without_discount ?? 0;
         
         renderTableTotalSum(orderData.price_without_discount)
     } catch (error) {
@@ -190,8 +192,8 @@ const renderTableInfo = () => {
 const renderTableTotalSum = (totalSum) => {
     const totalSumSpan = document.querySelector(".total-sum");
     if (totalSumSpan) {
-        totalSumSpan.textContent = `${totalSum}₴`;
-    }
+        totalSumSpan.textContent = `${totalSum ?? 0}₴`;
+    }   
 };
 
 // =============================

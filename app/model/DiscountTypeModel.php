@@ -1,8 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../dal/DiscountTypeDal.php';
-
-
 class DiscountTypeModel
 {
     private $discountTypeDal;

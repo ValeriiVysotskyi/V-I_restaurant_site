@@ -1,28 +1,12 @@
 // =============================
 // API
 // =============================
-async function checkAuth() {
-    renderLoader()
-
-    const response = await fetch("", {
-        method: 'POST',
-        credentials: "include"
-    })
-
-    if (!response.ok) {
-        location.href = "./loginPage.js"
-    }
-
-    getOrders()
-}
-
 async function logout() {
     renderLoader()
 
     try {
         const response = await fetch(`${CONFIG.API_URL}/api/logout`, {
             method: 'POST',
-            // credentials: "include"
         })
 
         if (response.ok) {
@@ -47,7 +31,7 @@ async function getOrders() {
         }
 
         const data = await response.json()
-        renderOrders(data.orders)
+        renderOrders(data)
 
         removeLoader()
 
@@ -65,7 +49,11 @@ async function getOrderDetails(orderId) {
             throw new Error(`Server Error: ${response.status}`)
         }
 
+        
         const data = await response.json()
+
+
+        console.log('Ответ от сервера:', data);
         return data
 
     } catch (error) {
@@ -75,7 +63,7 @@ async function getOrderDetails(orderId) {
 
 async function getDiscountInfo() {
     try {
-        const response = await fetch(`${CONFIG.API_URL}/api/discounts`)
+        const response = await fetch(`${CONFIG.API_URL}/api/discount_type`)
 
         if (!response.ok) {
             throw new Error(`Server Error: ${response.status}`)
@@ -90,32 +78,50 @@ async function getDiscountInfo() {
 }
 
 async function updateDishQuantityApi(orderId, dishId, quantity) {
-    const url = quantity === 0 
-        ? `${CONFIG.API_URL}/api/orders/dishes/delete` 
-        : `${CONFIG.API_URL}/api/orders/dishes/update`
+    if (quantity === 0) {
+        const response = await fetch(`${CONFIG.API_URL}/api/orders/delete`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order_id: orderId, dish_id: dishId })
+        })
+        if (!response.ok) throw new Error('Помилка при видаленні страви')
+    } else {
+        const response = await fetch(`${CONFIG.API_URL}/api/orders/${orderId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order_id: orderId, dish_id: dishId, quantity: quantity })
+        })
+        if (!response.ok) throw new Error('Помилка при оновленні страви')
+    }
         
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ order_id: orderId, dish_id: dishId, quantity: quantity })
-    })
-    if (!response.ok) throw new Error('Помилка при оновленні страви')
     return true
 }
 
 async function updateOrderStatusApi(orderId, statusId) {
-    const response = await fetch(`${CONFIG.API_URL}/api/orders/status`, {
-        method: 'POST',
+    const response = await fetch(`${CONFIG.API_URL}/api/orders/${orderId}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ order_id: orderId, status_id: statusId })
+        body: JSON.stringify({ 
+            id: currentOrder.order_id,
+            status_id: 1,
+            table_number: currentOrder.table_number,
+            discount_type_id: 1,
+            total_price: 0,
+            price_without_discount: currentOrder.price_without_discount,
+            payment_method: null
+        })
     })
-    if (!response.ok) throw new Error('Помилка при зміні статусу замовлення')
+    
+    if (!response.ok) {
+        throw new Error('Помилка при зміні статусу замовлення')
+    }
+    
     return true
 }
 
 async function closeOrderApi(orderData) {
-    const response = await fetch(`${CONFIG.API_URL}/api/orders/close`, {
-        method: 'POST',
+    const response = await fetch(`${CONFIG.API_URL}/api/orders/${orderData.id}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)
     })
@@ -144,6 +150,11 @@ function recalculateOrderPrices() {
 
     document.querySelector(".sub-total-sum").textContent = `${newPriceWithoutDiscount} грн`
     
+    const backgroundCardSum = document.querySelector(`.order-card[data-order-id="${currentOrder.order_id}"] .sum-value`)
+    if (backgroundCardSum) {
+        backgroundCardSum.textContent = `${newPriceWithoutDiscount} ₴`
+    }
+
     renderUpdateDiscount()
 }
 
@@ -177,7 +188,7 @@ async function changeQuantity(dishId, delta) {
     
     const dish = currentOrder.dishes.find(d => d.dish_id === dishId)
     if (!dish) return
-
+    console.log('Клик сработал! dishId =', dishId);
     const newQuantity = dish.quantity + delta
 
     if (newQuantity <= 0) {
@@ -235,6 +246,7 @@ async function handleCancelOrderSubmit() {
 
     renderLoader()
     try {
+        console.log('Отправляем запрос на отмену заказа с ID:', currentOrder);
         await updateOrderStatusApi(currentOrder.order_id, 1)
         
         closeCancelModal()
@@ -296,6 +308,7 @@ const renderOrders = (orders) => {
     for (const order of orders) {
         const orderCard = document.createElement("div")
         orderCard.className = "order-card"
+        orderCard.dataset.orderId = order.id
         orderCard.onclick = () => handleOpenOrder(order.id)
         ordersContainer.appendChild(orderCard)
 
@@ -364,10 +377,8 @@ const renderOrderDetails = (order, discounts) => {
 
     const dishContainer = document.querySelector(".order-items-list")
     dishContainer.innerHTML = ""
-
     for (const dish of order.dishes) {
         const totalDishPrice = dish.price_at_purchase * dish.quantity
-
         const itemHTML = `
             <div class="order-item" data-dish-id="${dish.dish_id}">
                 <img src="${dish.image_path}" class="item-img" alt="${dish.dish_name}">
@@ -392,7 +403,7 @@ const renderOrderDetails = (order, discounts) => {
     }
 
     const discountSelect = document.getElementById('discount-select')
-    let optionsHTML = `<option value="0">Без знижки (0%)</option>`
+    let optionsHTML = ``
     for (const discount of discounts) {
         optionsHTML += `<option value="${discount.rate}">${discount.name} (${discount.rate*100}%)</option>`
     }
@@ -487,4 +498,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // =============================
 // CALLS
 // =============================
-checkAuth()
+
+setInterval(() => {
+    if (!currentOrder) {
+        getOrders();
+    }
+}, 60000);
