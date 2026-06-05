@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V&I restaurant - Управління замовленнями</title>
+    <link rel="stylesheet" href="./css/mainAdminPage.css">
+    <script src="./js/config.js" defer></script>
+    <script src="./js/mainAdminPage.js" defer></script>
+</head>
+<body>
+
+    <div id="loader-overlay" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-circle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path></svg>
+                </div>
+                <div>
+                    <h2>V&I restaurant</h2>
+                    <p>Адмін панель</p>
+                </div>
+            </div>
+
+            <nav class="sidebar">
+                <button id="nav-dishes" class="nav-btn active" onclick="switchTab('dishes')">
+                    <i class="icon-home"></i> Головна / Страви
+                </button>
+    
+                <button id="nav-orders" class="nav-btn" onclick="switchTab('orders')">
+                    <i class="icon-receipt"></i> Замовлення / Чеки
+                </button>
+    
+                <button id="nav-add-dish" class="nav-btn" onclick="openAddDishModal()">
+                    <i class="icon-plus"></i> Додати страву
+                </button>
+           
+
+            
+                <div class="sidebar-footer">
+                    <button class="logout-btn" onclick="logout()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Вийти
+                    </button>
+                </div>
+             </nav>
+        </aside>
+
+<main class="main-content">
+
+            <div id="dishesSection" style="display: block;">
+                <h2>Керування стравами</h2>
+                <div class="section-divider"></div>
+                <div class="dishes-grid" id="dishesGrid">
+                    </div>
+
+                <div id="dishModal" class="modal-overlay" style="display: none;">
+                    <div class="modal-content">
+                        <h3>Редагувати страву</h3>
+                        
+                        <div class="upload-zone">
+                            <p>Натисніть для завантаження або перетягніть файл</p>
+                            <input type="file" id="dishImageInput" accept="image/*">
+                            <input type="hidden" id="hiddenImagePath">
+                            <input type="hidden" id="hiddenDishId">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dishName">Назва страви</label>
+                            <input type="text" id="dishName" placeholder="Наприклад, Салат Цезар">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dishCategory">Категорія</label>
+                            <select id="dishCategory">
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dishDescription">Опис</label>
+                            <textarea id="dishDescription" rows="3" placeholder="Склад страви..."></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dishWeight">Вага/Об'єм</label>
+                                <input type="text" id="dishWeight" placeholder="Наприклад, 250г">
+                            </div>
+                            <div class="form-group">
+                                <label for="dishPrice">Ціна (грн)</label>
+                                <input type="number" id="dishPrice" placeholder="185">
+                            </div>
+                        </div>
+
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="dishIsAvailable" checked>
+                            <label for="dishIsAvailable">Страва доступна для замовлення</label>
+                        </div>
+
+                        <div class="modal-actions">
+                            <button type="button" class="btn-delete" id="btnDeleteDish" style="display: none;">Видалити</button>
+                            <div class="right-actions">
+                                <button type="button" class="btn-cancel" onclick="closeDishModal()">Скасувати</button>
+                                <button type="button" class="btn-save" id="btnSaveDish">Зберегти зміни</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <div id="ordersSection" style="display: none;">
+                
+                <header class="page-header">
+                    <h1>Керування замовленнями</h1>
+                    <p>Перегляд та фільтрація замовлень</p>
+                </header>
+
+                <section class="filters-card">
+                    <h3>Фільтри</h3>
+                    <div class="filters-row">
+                        <select id="statusFilter">
+                            <option value="Усі статуси">Усі статуси</option>
+                        </select>
+                        
+                        <div class="date-range">
+                            <input type="date" id="dateFrom" title="Початкова дата">
+                            <span style="color: var(--text-muted);">-</span>
+                            <input type="date" id="dateTo" title="Кінцева дата">
+                        </div>
+                    </div>
+                </section>
+            
+                <div class="info-row">
+                    <p>Знайдено замовлень: <span id="ordersCount">0</span></p>
+                    <p class="total-sum">Загальна сума: <span id="totalSum">0</span> грн</p>
+                </div>
+
+                <div class="table-responsive card">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th data-sort="id" style="cursor: pointer;">Номер чеку <span class="sort-arrow" style="opacity: 0.3;">↓</span></th>
+                                <th data-sort="table" style="cursor: pointer;">Номер столу <span class="sort-arrow" style="opacity: 0.3;">↓</span></th>
+                                <th data-sort="items" style="cursor: pointer;">Кількість страв <span class="sort-arrow" style="opacity: 0.3;">↓</span></th>
+                                <th data-sort="price" style="cursor: pointer;">Сума <span class="sort-arrow" style="opacity: 0.3;">↓</span></th>
+                                <th data-sort="status" style="cursor: pointer;">Статус <span class="sort-arrow" style="opacity: 0.3;">↓</span></th>
+                                <th data-sort="datetime" style="cursor: pointer;">Дата та час <span class="sort-arrow" style="opacity: 0.3;">↓</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div> </main>
+    </div>
+</body>
+</html>
