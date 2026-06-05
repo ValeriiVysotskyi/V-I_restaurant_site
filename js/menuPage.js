@@ -13,19 +13,15 @@ async function getCategories() {
         renderCategoryButtons(categories);
 
     } catch (error) {
-        console.error("Не вдалося завантажити категорії:", error);
+        alert("Не вдалося завантажити категорії");
     }
 }
 
 async function getDishes(category_id) {
     try {
-        const loaderDisplay = document.querySelector(".loader");
-        const menuDisplay = document.querySelector(".menu");
+        
         const container = document.querySelector(".dish-container");
-
         container.innerHTML = "";
-        loaderDisplay.style.display = "flex";
-        menuDisplay.style.display = "none";
 
         const response = await fetch(`${CONFIG.API_URL}/api/dish?category_id=${category_id}`);
 
@@ -35,9 +31,6 @@ async function getDishes(category_id) {
 
         const data = await response.json();
         renderDishes(data);
-
-        loaderDisplay.style.display = "none";
-        menuDisplay.style.display = "block";
 
     } catch (error) {
         console.error("Помилка при завантаженні блюд:", error);
@@ -75,6 +68,20 @@ const addDish = (dishInfo) => {
     }
     
     localStorage.setItem(`vi_${dishInfo.id}`, JSON.stringify(storedDish))
+}
+
+async function initializeMenuPage() {
+    const loaderDisplay = document.querySelector(".loader")
+    const menuDisplay = document.querySelector(".menu")
+
+    loaderDisplay.style.display = "flex"
+    menuDisplay.style.display = "none"
+
+    await getCategories()
+    getDishes(0)
+
+    loaderDisplay.style.display = "none"
+    menuDisplay.style.display = "block"
 }
 
 
@@ -160,5 +167,6 @@ function setupCategoryClicks() {
     });
 }
 
-getCategories();
-getDishes(0);
+
+
+initializeMenuPage()

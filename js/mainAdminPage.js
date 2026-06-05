@@ -400,7 +400,7 @@ function renderDishesGrid(dishes) {
     grid.innerHTML = '';
 
     dishes.forEach(dish => {
-        const isAvailable = dish.is_available === 1;
+        const isAvailable = dish.is_available === "1";
         const overlayHtml = !isAvailable ? `<div class="dish-overlay"><span class="badge-stop">Немає в наявності</span></div>` : '';
         const imageSrc = dish.image_path || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 
@@ -493,6 +493,7 @@ async function initDishesPage() {
         ]);
         globalCategories = categories;
         allDishes = dishes;
+
         
         populateCategorySelect();
         renderDishesGrid(allDishes);

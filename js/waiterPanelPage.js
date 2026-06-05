@@ -52,8 +52,6 @@ async function getOrderDetails(orderId) {
         
         const data = await response.json()
 
-
-        console.log('Ответ от сервера:', data);
         return data
 
     } catch (error) {
@@ -186,10 +184,9 @@ async function handleOpenOrder(orderId) {
 async function changeQuantity(dishId, delta) {
     if (!currentOrder) return
     
-    const dish = currentOrder.dishes.find(d => d.dish_id === dishId)
+    const dish = currentOrder.dishes.find(d => Number(d.dish_id) === Number(dishId))
     if (!dish) return
-    console.log('Клик сработал! dishId =', dishId);
-    const newQuantity = dish.quantity + delta
+    const newQuantity = Number(dish.quantity) + delta
 
     if (newQuantity <= 0) {
         await deleteDish(dishId)
@@ -246,7 +243,6 @@ async function handleCancelOrderSubmit() {
 
     renderLoader()
     try {
-        console.log('Отправляем запрос на отмену заказа с ID:', currentOrder);
         await updateOrderStatusApi(currentOrder.order_id, 1)
         
         closeCancelModal()
@@ -498,6 +494,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // =============================
 // CALLS
 // =============================
+getOrders()
 
 setInterval(() => {
     if (!currentOrder) {

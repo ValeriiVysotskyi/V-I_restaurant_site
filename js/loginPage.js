@@ -13,7 +13,7 @@ document.getElementById("login-form").addEventListener("submit", async function(
     const data = Object.fromEntries(formData.entries(formData))
 
     try {
-        const response = await fetch(`${CONFIG.API_URL}/api/login`, {
+        const response = await fetch(`https://5872e08c-3af7-4c46-b35e-5e0455740393.mock.pstmn.io/api/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
