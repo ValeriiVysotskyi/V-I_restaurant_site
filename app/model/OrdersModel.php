@@ -18,6 +18,10 @@ class OrdersModel
         return $this->ordersDal->getWaiterOrderDetails($orderId);
     }
 
+    public function getActiveOrders() {
+        return $this->ordersDal->getAll(['status_id' => 3], 'updated_at', 'DESC');
+    }
+
     public function getOrderByTable($tableNumber) {
         $order = $this->ordersDal->findActiveOrderByTable($tableNumber);
 
@@ -34,7 +38,18 @@ class OrdersModel
         $order = $this->ordersDal->findActiveOrderByTable($tableNumber);
 
         if ($order === null) {
-            $orderId = $this->ordersDal->insert(['status_id' => 3, 'table_number' => $tableNumber]);
+            $orderId = $this->ordersDal->insert([
+                'status_id' => 3, 
+                'table_number' => $tableNumber,
+                'discount_type_id' => 3,
+                'total_price' => 0,
+                'price_without_discount' => 0,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+        
+            if (!$orderId) {
+                throw new Exception("Не вдалося створити нове замовлення в БД.");
+            }
         } else {
             $orderId = $order['id'];
         }
@@ -58,22 +73,28 @@ class OrdersModel
         return $orderId;
     }
 
-    public function updateOrderItem($orderId, $dishId, $quantity) {
+ public function updateOrderItem($orderId, $dishId, $quantity) { 
         $order = $this->ordersDal->getById($orderId);
 
         if (!$order) {
-            return false;
+            return "Error: Order $orderId not found in DB";
         }
 
-        if ($order['status_id'] !== 3) {
-            return false;
+        if ((int)$order['status_id'] !== 3) {
+            return "Error: Order status is not 3";
         }
 
         if ($quantity <= 0) {
             return $this->orderItemDal->deleteOrderDish($orderId, $dishId);
         }
 
-        return $this->orderItemDal->updateQuantity($orderId, $dishId, $quantity);
+        $result = $this->orderItemDal->updateQuantity($orderId, $dishId, $quantity);
+        
+        if (!$result) {
+            return "Error: SQL update failed in OrderItemDal";
+        }
+        
+        return true;
     }
 
     public function updateOrder($order)

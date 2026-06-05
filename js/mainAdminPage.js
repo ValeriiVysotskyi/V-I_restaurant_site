@@ -3,7 +3,7 @@
 // =============================
 async function fetchOrders() {
     try {
-        const response = await fetch(`${CONFIG.API_URL}/api/orders?admin_mode=true`);
+        const response = await fetch(`${CONFIG.API_URL}/api/orders?admin=true`);
         if (!response.ok) throw new Error(`Server Error: ${response.status}`);
         const data = await response.json();
         return Array.isArray(data) ? data : [data];
@@ -65,17 +65,12 @@ async function saveDishToApi(dishData) {
 
 async function deleteDishFromApi(id) {
     try {
-        const response = await fetch(`${CONFIG.API_URL}/api/dish`, {
+        const response = await fetch(`${CONFIG.API_URL}/api/dish/${id}`, {
             method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id: parseInt(id) })
         });
 
         if (!response.ok) throw new Error(`Server Error: ${response.status}`);
         
-        console.log(`Страва з ID ${id} успішно видалена`);
         return true;
     } catch (error) {
         console.error("Помилка видалення страви:", error);
@@ -83,11 +78,70 @@ async function deleteDishFromApi(id) {
     }
 }
 
-async function uploadDishImage(file) {
-    // ЗАГЛУШКА
-    console.log("Імітація завантаження файлу...", file.name);
-    return new Promise(resolve => setTimeout(() => resolve(`./assets/images/dishes/${file.name}`), 500));
+async function uploadDishImage(file, oldImagePath = '') {
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    if (oldImagePath) {
+        formData.append('old_image_path', oldImagePath);
+    }
+
+    const response = await fetch('/api/dish/upload', { 
+        method: 'POST',
+        body: formData 
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const fileInput = document.getElementById('dishImageInput');
+    const hiddenPathInput = document.getElementById('hiddenImagePath');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Файл занадто великий. Максимум 5 МБ.');
+                fileInput.value = ''; 
+                return;
+            }
+
+            const oldImagePath = hiddenPathInput.value;
+            
+            const textElement = event.target.parentElement.querySelector('p');
+
+            if (textElement) textElement.textContent = 'Завантаження...';
+
+            try {
+                const result = await uploadDishImage(file, oldImagePath);
+                
+                if (result.success) {
+                    hiddenPathInput.value = result.path;
+                    console.log('Зображення завантажено. Шлях:', result.path);
+                    
+                    if (textElement) textElement.textContent = `Завантажено: ${file.name}`;
+                } else {
+                    alert('Помилка завантаження: ' + result.error);
+                    fileInput.value = '';
+                    if (textElement) textElement.textContent = 'Натисніть для завантаження або перетягніть файл';
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Сталася помилка при відправці файлу на сервер.');
+                fileInput.value = '';
+                if (textElement) textElement.textContent = 'Натисніть для завантаження або перетягніть файл';
+            }
+        });
+    }
+});
 
 
 async function logout() {
@@ -346,7 +400,7 @@ function renderDishesGrid(dishes) {
     grid.innerHTML = '';
 
     dishes.forEach(dish => {
-        const isAvailable = dish.is_available === true;
+        const isAvailable = dish.is_available === 1;
         const overlayHtml = !isAvailable ? `<div class="dish-overlay"><span class="badge-stop">Немає в наявності</span></div>` : '';
         const imageSrc = dish.image_path || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 
@@ -361,7 +415,7 @@ function renderDishesGrid(dishes) {
             <div class="dish-info">
                 <div class="dish-name">${dish.name}</div>
                 <div class="dish-desc">${dish.description || ''}</div>
-                <button class="btn-edit-card" onclick="console.log('Клік по ID:', ${dish.id}); openDishModal(${dish.id})">Редагувати</button>
+                <button class="btn-edit-card" onclick="openDishModal(${dish.id})">Редагувати</button>
             </div>
         `;
         grid.appendChild(card);
@@ -415,6 +469,7 @@ function openDishModal(dishId = null) {
         document.getElementById('dishIsAvailable').checked = true;
         document.getElementById('hiddenImagePath').value = '';
         document.getElementById('dishImageInput').value = '';
+        document.querySelector('.upload-zone p').textContent = 'Натисніть для завантаження або перетягніть файл';
     }
     
     modal.style.display = 'flex';
@@ -446,19 +501,9 @@ async function initDishesPage() {
     }
 }
 
-document.getElementById('dishImageInput')?.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    e.target.parentElement.querySelector('p').textContent = 'Завантаження...';
-    const imagePath = await uploadDishImage(file);
-    document.getElementById('hiddenImagePath').value = imagePath;
-    e.target.parentElement.querySelector('p').textContent = `Завантажено: ${file.name}`;
-});
-
 document.getElementById('btnSaveDish')?.addEventListener('click', async () => {
     const dishData = {
-        id: document.getElementById('hiddenDishId').value || null,
+        id: document.getElementById('hiddenDishId').value,
         name: document.getElementById('dishName').value,
         category_id: document.getElementById('dishCategory').value,
         description: document.getElementById('dishDescription').value,
@@ -468,6 +513,10 @@ document.getElementById('btnSaveDish')?.addEventListener('click', async () => {
         image_path: document.getElementById('hiddenImagePath').value
     };
 
+    if (!dishData.name || !dishData.category_id || !dishData.price) {
+        alert("Помилка: Заповніть всі обов'язкові поля (Назва, Категорія, Ціна)!");
+        return;
+    }
     const success = await saveDishToApi(dishData);
     if (success) {
         closeDishModal();

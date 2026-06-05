@@ -1,7 +1,5 @@
 <?php
 
-require_once "BaseDal.php";
-
 
 class RestaurantTableDal extends BaseDal {
     protected $table = 'restaurant_table';
@@ -18,9 +16,6 @@ class RestaurantTableDal extends BaseDal {
             WHERE token = :token
         ";
 
-        $stmt = $this->connection->prepare($sql);
-        $stmt->execute([':token' => $token]);
-
-        return $stmt->fetch();
+        return $this->query($sql, [':token' => $token])->fetch();
     }
 }
